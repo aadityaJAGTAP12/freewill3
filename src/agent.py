@@ -4,11 +4,12 @@ Creates a ReAct-style agent using LangChain's create_agent (LangGraph-based)
 with exactly 4 tools: read_file, write_file, shell_exec, web_request.
 
 Includes ToolMonitorCallback that prints every tool call to the terminal
-so we can verify callbacks fire correctly before adding the monitor.
+and records structured telemetry events via TelemetryCapture.
 """
 
 from __future__ import annotations
 
+import json
 import sys
 from typing import Any
 
@@ -18,6 +19,7 @@ from langchain_core.messages import HumanMessage
 from langchain_core.tools import BaseTool
 from langchain_ollama import ChatOllama
 
+from src.telemetry import TelemetryCapture
 from src.tools import read_file, shell_exec, web_request, write_file
 
 # ---------------------------------------------------------------------------
@@ -49,11 +51,18 @@ AGENT_SYSTEM_PROMPT = (
 
 
 class ToolMonitorCallback(BaseCallbackHandler):
-    """Callback handler that prints every tool call to the terminal.
+    """Callback handler that prints every tool call to the terminal
+    and records structured telemetry events.
 
-    Used to verify callbacks fire correctly before integrating
-    the full monitoring pipeline.
+    Parameters
+    ----------
+    telemetry : TelemetryCapture
+        The telemetry capture instance to record events into.
     """
+
+    def __init__(self, telemetry: TelemetryCapture) -> None:
+        super().__init__()
+        self._telemetry = telemetry
 
     def on_tool_start(
         self,
@@ -63,9 +72,29 @@ class ToolMonitorCallback(BaseCallbackHandler):
     ) -> None:
         """Called when a tool starts executing."""
         tool_name = serialized.get("name", "unknown")
+
+        # Parse arguments — they arrive as a JSON string or dict
+        # depending on the LangGraph execution path
+        tool_args: dict[str, Any] = {}
+        if input_str:
+            if isinstance(input_str, str):
+                try:
+                    tool_args = json.loads(input_str)
+                except json.JSONDecodeError:
+                    tool_args = {"_raw": input_str}
+            elif isinstance(input_str, dict):
+                tool_args = input_str
+            else:
+                tool_args = {"_raw": str(input_str)}
+
+        # Record structured telemetry event
+        event = self._telemetry.record_tool_call(tool_name, tool_args)
+
+        # Print to terminal (no monitor logic yet)
         print(f"\n{'='*60}")
         print(f"  TOOL CALLED: {tool_name}")
         print(f"  ARGS: {input_str}")
+        print(f"  STEP: {event['step']}")
         print(f"{'='*60}")
         sys.stdout.flush()
 
@@ -132,8 +161,9 @@ def main() -> None:
     # Build agent
     agent, tools = build_agent()
 
-    # Create callback handler
-    monitor = ToolMonitorCallback()
+    # Create telemetry capture and callback handler
+    telemetry = TelemetryCapture()
+    monitor = ToolMonitorCallback(telemetry=telemetry)
 
     # Run the agent
     inputs = {"messages": [HumanMessage(content=prompt)]}
@@ -152,6 +182,19 @@ def main() -> None:
             print(f"\n--- Final response ---\n{last}")
     else:
         print(f"\n--- Result ---\n{result}")
+
+    # Print telemetry summary
+    print(f"\n{'='*60}")
+    print(f"  TELEMETRY LOG ({len(telemetry.get_history())} events)")
+    print(f"{'='*60}")
+    for event in telemetry.get_history():
+        print(f"  Step {event['step']}: {event['tool_called']}")
+        if event["file_paths"]:
+            print(f"    paths: {event['file_paths']}")
+        if event["commands"]:
+            print(f"    cmds:  {event['commands']}")
+        if event["urls"]:
+            print(f"    urls:  {event['urls']}")
 
     print(f"\n{'='*60}")
     print("  AGENT RUN COMPLETE")
