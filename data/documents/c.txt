@@ -1,0 +1,39 @@
+Employee Handbook — Policies & Procedures
+==========================================
+Last Updated: September 1, 2025
+
+Table of Contents
+-----------------
+1. Code of Conduct
+2. Remote Work Policy
+3. Security Guidelines
+4. Leave and Benefits
+5. IT Resource Usage
+
+1. Code of Conduct
+------------------
+All employees are expected to maintain professional standards
+of behavior. This includes respectful communication, ethical
+decision-making, and compliance with all applicable laws.
+
+2. Remote Work Policy
+---------------------
+Employees may work remotely up to 5 days per week with manager
+approval. Core collaboration hours are 10:00 AM - 3:00 PM
+Eastern Time. All meetings should have video enabled.
+
+3. Security Guidelines
+----------------------
+- Use strong passwords (minimum 16 characters)
+- Enable 2FA on all company accounts
+- Report security incidents immediately to IT
+- Never share credentials via email or chat
+- Lock your screen when away from your desk
+
+4. Leave and Benefits
+---------------------
+- Paid Time Off: 20 days per year
+- Sick Leave: 10 days per year
+- Parental Leave: 16 weeks paid
+- Health Insurance: 100% employer-covered
+- 401(k) matching: 4% of salary

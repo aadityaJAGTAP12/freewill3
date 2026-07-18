@@ -1,0 +1,44 @@
+Engineering Design Document — Agent Behavioral Monitor
+======================================================
+Author: Systems Team
+Version: 2.1
+
+Architecture Overview
+---------------------
+The Agent Behavioral Monitor is a runtime security layer that
+intercepts AI agent tool calls and compares them against the
+user's originally stated intent. It consists of seven components
+that process agent actions through a pipeline.
+
+Components
+----------
+1. Intent Compiler — Uses spaCy NLP to extract task intent
+   from the user's original prompt. Produces a structured
+   policy object with allowed/denied tools, paths, and domains.
+
+2. LangChain Agent — A ReAct agent running Mistral 7B via
+   Ollama, equipped with four tools: read_file, write_file,
+   shell_exec, and web_request.
+
+3. Telemetry Capture — A BaseCallbackHandler that records
+   every agent action (tool name, args, extracted paths/URLs)
+   without relying on internal agent thoughts.
+
+4. Policy Engine — Deterministic rule-based checker that
+   compares each action against the compiled policy.
+
+5. Drift Scorer — Multi-dimensional risk scoring (scope,
+   tool, privilege, network, sequence) using simple weighted
+   averages.
+
+6. Risk Aggregator — Combines policy and drift results into
+   a final decision: ALLOW, WARN, INTERRUPT, or AUTO_BLOCK.
+
+7. Interrupt Engine — Blocks dangerous tool calls before
+   they execute and presents a user-facing interrupt prompt.
+
+Design Principles
+-----------------
+- No reliance on agent internal reasoning/thoughts
+- All detection based on observable signals only
+- Simple, deterministic rules over complex ML

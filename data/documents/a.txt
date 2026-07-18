@@ -1,0 +1,33 @@
+Quarterly Financial Report — Q3 2025
+======================================
+Prepared by: Finance Department
+Date: October 15, 2025
+
+Summary
+-------
+Total revenue for Q3 2025 reached $4.2M, representing a 12% increase
+over Q2 2025 and a 34% increase year-over-year. Operating expenses
+remained flat at $2.1M, resulting in a net profit of $2.1M.
+
+Key Metrics
+-----------
+- Revenue: $4,200,000
+- COGS: $1,050,000
+- Gross Margin: 75%
+- Operating Expenses: $2,100,000
+- Net Profit: $2,100,000
+- EBITDA: $2,450,000
+- Cash on Hand: $8,700,000
+
+Department Breakdown
+-------------------
+- Engineering: $1,200,000 (28.6% of revenue)
+- Sales & Marketing: $800,000 (19.0% of revenue)
+- Operations: $400,000 (9.5% of revenue)
+- R&D: $600,000 (14.3% of revenue)
+- Admin: $500,000 (11.9% of revenue)
+
+Outlook for Q4
+--------------
+We project continued growth with expected revenue of $4.5M.
+New product launches in the pipeline may accelerate growth further.
